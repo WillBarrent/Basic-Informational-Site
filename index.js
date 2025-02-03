@@ -6,20 +6,24 @@ const server = http.createServer();
 
 server.on("request", async (req, res) => {
   const parsed_url = url.parse(req.url, true);
-  let filename = "./" + parsed_url.pathname;
+  let pathname = parsed_url.pathname;
 
-  if ((filename = "./")) {
-    filename = "./index.html";
+  if ((pathname === "/")) {
+    pathname = "./index.html";
+  } else if (pathname === '/about') {
+    pathname = "./about.html";
+  } else if (pathname === '/contact') {
+    pathname = "./contact-me.html";
+  } else {
+    pathname = "./404.html";
   }
 
   try {
-    const data = await fs.readFile(filename, { encoding: "utf-8" });
+    const data = await fs.readFile(pathname, { encoding: "utf-8" });
     res.writeHead(200, { "Content-Type": "text/html" });
     res.write(data);
   } catch (e) {
-    const data = await fs.readFile("./404.html", { encoding: "utf-8" });
-    res.writeHead(404, { "Content-Type": "text/html" });
-    res.write(data);
+    console.error(e);
   }
 
   return res.end();
